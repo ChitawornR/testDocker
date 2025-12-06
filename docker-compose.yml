@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    # The .env file should be in the same directory as this docker-compose.yml file
+    # and will be used for runtime environment variables.
+    env_file:
+      - .env
+    environment:
+      # Override the DB_HOST to use the service name 'db' from this compose file
+      - DB_HOST=db
+      # Ensure NODE_ENV is set to production for the Next.js app to run correctly
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  db:
+    image: mysql:8.0
+    # If you have an Apple Silicon chip (M1, M2), use this platform setting
+    # platform: linux/amd64
+    restart: always
+    environment:
+      # These values should match what you have in your .env file
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # IMPORTANT: You should set a strong password here
+    ports:
+      # Expose port 3307 on the host to avoid conflicts with local MySQL on 3306
+      - "3307:3306"
+    volumes:
+      # Persist database data
+      - mysql_data:/var/lib/mysql
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+
+networks:
+  my_network:
+    driver: bridge
