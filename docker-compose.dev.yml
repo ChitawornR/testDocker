@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Mount the local source code into the container
+      # This enables hot-reloading when you make changes on your host machine
+      - .:/app
+      # Anonymize the node_modules directory to prevent it from being overwritten by the host
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      # For development, Next.js will use NODE_ENV=development by default with `npm run dev`
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: test_gemini_cli
+      MYSQL_ROOT_PASSWORD: '' # You can set a password if you prefer
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+
+networks:
+  my_network:
+    driver: bridge
