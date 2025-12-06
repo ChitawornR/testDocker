@@ -23,6 +23,7 @@ services:
 
   db:
     image: mysql:8.0
+    container_name: db
     # If you have an Apple Silicon chip (M1, M2), use this platform setting
     # platform: linux/amd64
     restart: always
