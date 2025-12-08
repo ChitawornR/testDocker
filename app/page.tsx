@@ -20,7 +20,21 @@ export default function Page() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("/api/users/me");
+        const res = await fetch("/api/users/me", { redirect: "manual" });
+
+        // ถ้าโดน redirect → ไม่ใช่ JSON → setUser(null)
+        if (res.type === "opaqueredirect" || res.status === 302) {
+          setUser(null);
+          return;
+        }
+
+        // ถ้าไม่ใช่ JSON ก็ไม่ต้อง parse
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          setUser(null);
+          return;
+        }
+
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
@@ -28,8 +42,8 @@ export default function Page() {
           setUser(null);
         }
       } catch (err) {
-        console.error(err);
-        router.push("/"); // Redirect to login on network error
+        console.error("Fetch error:", err);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -78,13 +92,13 @@ export default function Page() {
                   Updated At: {user.updatedAt}
                 </p>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mr-2"
+                  className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded mt-4 mr-2"
                   onClick={() => (window.location.href = "/dashboard")}
                 >
                   Go to Dashboard
                 </button>
                 <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
+                  className="bg-red-500 hover:bg-red-700 cursor-pointer text-white font-bold py-2 px-4 rounded mt-4"
                   onClick={handleLogout}
                 >
                   Logout
@@ -94,13 +108,13 @@ export default function Page() {
               <div>
                 <p className="text-lg font-bold">You are not logged in.</p>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mr-2"
+                  className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded mt-4 mr-2"
                   onClick={() => router.push("/login")}
                 >
                   Login
                 </button>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                  className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded mt-4"
                   onClick={() => router.push("/register")}
                 >
                   Register
