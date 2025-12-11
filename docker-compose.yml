@@ -5,11 +5,11 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        DB_HOST=db
-        DB_USER=${DB_USER}
-        DB_PASSWORD=${DB_PASSWORD}
-        DB_DATABASE=${DB_DATABASE}
-        JWT_SECRET=${JWT_SECRET}
+        DB_HOST: db
+        DB_USER: ${DB_USER}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_DATABASE: ${DB_DATABASE}
+        JWT_SECRET: ${JWT_SECRET}
     ports:
       - "3000:3000"
     env_file:
@@ -29,7 +29,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: mysql_db_prod
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -39,12 +39,12 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data_prod:/var/lib/mysql
     networks:
       - my_network
 
 volumes:
-  mysql_data:
+  mysql_data_prod:
 
 networks:
   my_network:
