@@ -15,9 +15,17 @@ COPY . .
 
 # Set build-time environment variables from .env if they are needed for the build process
 # Note: These are not the runtime variables.
-# ARG DATABASE_URL
-# ENV DATABASE_URL=${DATABASE_URL}
-# You can add other build-time vars here
+ARG DB_HOST
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_DATABASE
+ARG JWT_SECRET
+
+ENV DB_HOST=${DB_HOST}
+ENV DB_USER=${DB_USER}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_DATABASE=${DB_DATABASE}
+ENV JWT_SECRET=${JWT_SECRET}
 
 # Build the Next.js application
 RUN npm run build
