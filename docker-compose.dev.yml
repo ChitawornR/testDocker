@@ -28,12 +28,13 @@ services:
     environment:
       MYSQL_DATABASE: test_gemini_cli
       # MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: ''
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: 'root'
+      # MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     ports:
       - "3307:3306"
     volumes:
       - mysql_data_dev:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - my_network
 
